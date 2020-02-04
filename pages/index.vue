@@ -10,23 +10,19 @@
         Submit
       </BaseButton>
     </div>
-    <ul>
-      <li v-for="post in posts" :key="post.id">
-        {{ post.message }}
-      </li>
-    </ul>
+    <MessageArea :posts="posts" />
   </section>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import firebase from '@/plugins/firebase';
 import BaseButton from '@/components/BaseButton';
-const db = firebase.firestore();
+import MessageArea from '@/components/MessageArea';
 
 export default {
   components: {
     BaseButton,
+    MessageArea,
   },
   data() {
     return {
@@ -37,17 +33,17 @@ export default {
     ...mapGetters(['posts']),
   },
   created() {
-    this.$store.dispatch('setPostsRef', db.collection('posts'));
+    this.$store.dispatch('fetchPostList');
   },
   methods: {
     sendData() {
-      if (!this.message || this.message.length > 100) {
-        return false;
-      }
-      const dbdata = {
-        message: this.message,
-      };
-      db.collection('posts').add(dbdata);
+      // if (!this.message || this.message.length > 100) {
+      //   return false;
+      // }
+      // const dbdata = {
+      //   message: this.message,
+      // };
+      // db.collection('posts').add(dbdata);
     },
   },
 };
