@@ -1,19 +1,28 @@
-import { vuexfireMutations, firestoreAction } from 'vuexfire';
+import firebase from '@/plugins/firebase';
 
 export const state = () => ({
   posts: [],
 });
 
 export const mutations = {
-  ...vuexfireMutations,
+  setPosts(state, payload) {
+    state.posts = payload;
+  },
 };
 
 export const actions = {
-  setPostsRef: firestoreAction(function(context, ref) {
-    context.bindFirestoreRef('posts', ref);
-  }),
+  async fetchPostList({ commit }) {
+    const res = await firebase.fetchPostList();
+    commit('setPosts', res);
+  },
+  async sendPost({ dispatch }, payload) {
+    await firebase.addPost(payload);
+    dispatch('fetchPostList');
+  },
 };
 
 export const getters = {
-  posts: state => state.posts,
+  getPosts(state) {
+    return state.posts;
+  },
 };

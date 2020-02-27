@@ -15,6 +15,8 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
+    'prefer-const': 2,
+    'no-console': 0,
     "prettier/prettier": [
       "error",
       {

@@ -1,32 +1,23 @@
 <template>
-  <section class="flex justify-between">
-    <div>
-      <textarea
-        v-model="message"
-        placeholder="Please enter a comment(Within 100 characters)"
-        maxLength="100"
-      />
-      <BaseButton @click="sendData" class="w-24 h-12" bg-color="#E7A4C4">
+  <section class="py-4 px-4 flex justify-between">
+    <div class="width">
+      <v-textarea v-model="message" label="コメント" filled auto-grow />
+      <BaseButton @click="sendPost" class="w-24 h-12" bg-color="#E7A4C4">
         Submit
       </BaseButton>
     </div>
-    <ul>
-      <li v-for="post in posts" :key="post.id">
-        {{ post.message }}
-      </li>
-    </ul>
+    <MessageArea :posts="posts" class="width message-area-height" />
   </section>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import firebase from '@/plugins/firebase';
 import BaseButton from '@/components/BaseButton';
-const db = firebase.firestore();
+import MessageArea from '@/components/MessageArea';
 
 export default {
   components: {
     BaseButton,
+    MessageArea,
   },
   data() {
     return {
@@ -34,21 +25,30 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['posts']),
+    posts: {
+      get() {
+        return this.$store.getters.getPosts;
+      },
+    },
   },
-  created() {
-    this.$store.dispatch('setPostsRef', db.collection('posts'));
+  async fetch({ store }) {
+    await store.dispatch('fetchPostList');
   },
   methods: {
-    sendData() {
-      if (!this.message || this.message.length > 100) {
-        return false;
-      }
-      const dbdata = {
-        message: this.message,
-      };
-      db.collection('posts').add(dbdata);
+    sendPost() {
+      if (!this.message) return false;
+      this.$store.dispatch('sendPost', this.message);
+      this.message = '';
     },
   },
 };
 </script>
+
+<style scoped>
+.width {
+  width: 49%;
+}
+.message-area-height {
+  height: calc(100vh - 32px);
+}
+</style>
