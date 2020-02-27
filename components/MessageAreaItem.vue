@@ -1,16 +1,21 @@
 <template>
-  <div class="border">
-    {{ message.message }}
-  </div>
+  <v-list-item class="border-t">
+    <v-list-item-title>
+      {{ post.message }}
+    </v-list-item-title>
+  </v-list-item>
 </template>
 
 <script>
 export default {
   props: {
-    message: { type: Object, default: () => {} },
-  },
-  mounted() {
-    console.log(1, this.message);
+    post: { type: Object, default: () => {} },
   },
 };
 </script>
+
+<style scoped>
+.border-t:first-child {
+  border-top: none;
+}
+</style>
